@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
-import click
 import logging
-from pathlib import Path
-from dotenv import find_dotenv, load_dotenv
 import os
+from pathlib import Path
+
+import click
 import numpy as np
 import torch
-from torchvision import datasets, transforms
-from torch.utils.data import DataLoader, TensorDataset
+from dotenv import find_dotenv, load_dotenv
 from torch.nn.functional import normalize
+from torch.utils.data import TensorDataset
 
 
 @click.command()
@@ -39,7 +39,7 @@ def main(input_filepath, output_filepath):
     trainset = TensorDataset(images, labels)
     torch.save(
         trainset,
-        os.path.abspath(os.path.join(dir, f"../../data/processed/train_mnist.pt")),
+        os.path.abspath(os.path.join(dir, "../../data/processed/train_mnist.pt")),
     )
 
     # load and transform test
@@ -51,10 +51,10 @@ def main(input_filepath, output_filepath):
     test_images = torch.FloatTensor(testdata["images"])
     test_labels = torch.LongTensor(testdata["labels"])
     normalize(test_images)
-    testset = TensorDataset(images, labels)
+    testset = TensorDataset(test_images, test_labels)
     torch.save(
         testset,
-        os.path.abspath(os.path.join(dir, f"../../data/processed/test_mnist.pt")),
+        os.path.abspath(os.path.join(dir, "../../data/processed/test_mnist.pt")),
     )
 
 

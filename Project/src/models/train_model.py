@@ -1,47 +1,41 @@
-import argparse
-import sys, os
+import logging
+import os
 
-sys.path.append(os.path.abspath(".."))
-
-import torch
-from torch import nn, optim
-from model import Linear, CNN
+import hydra
 import matplotlib.pyplot as plt
 import numpy as np
-import hydra
-import logging
-
+import torch
+from model import CNN, Linear
+from torch import nn, optim
 
 log = logging.getLogger(__name__)
 
 
-@hydra.main(config_path='../conf', config_name='config')
+@hydra.main(config_path="../conf", config_name="config")
 def train(cfg):
     log.info(f"Training started with parameters: {cfg.params}")
     torch.manual_seed(cfg.params.seed)
-    
-    dir = os.path.dirname(__file__)
 
     # TODO: Implement training loop here
-    if cfg.params.model == 'cnn':
+    if cfg.params.model == "cnn":
         model = CNN()
     else:
         model = Linear()
-        
+
     model.train()
-    train_set = torch.load(f'{cfg.paths.data_path}/{cfg.files.train_data}')
+    train_set = torch.load(f"{cfg.paths.data_path}/{cfg.files.train_data}")
     trainloader = torch.utils.data.DataLoader(
         train_set, batch_size=cfg.params.batch_size, shuffle=True
     )
-    log.info(f"Training data loaded")
+    log.info("Training data loaded")
 
-    test_set = torch.load(f'{cfg.paths.data_path}/{cfg.files.test_data}')
-    
+    test_set = torch.load(f"{cfg.paths.data_path}/{cfg.files.test_data}")
+
     testloader = torch.utils.data.DataLoader(
         test_set, batch_size=cfg.params.batch_size, shuffle=False
     )
-    
-    log.info(f"Test data loaded")
+
+    log.info("Test data loaded")
 
     criterion = nn.NLLLoss()
     optimizer = optim.Adam(model.parameters(), lr=cfg.params.lr)
@@ -78,32 +72,31 @@ def train(cfg):
                     equals = top_class == labels.view(*top_class.shape)
                     accuracy = torch.mean(equals.type(torch.FloatTensor))
                     running_accuracy += accuracy.item()
-            epoch_loss = running_loss/len(trainloader)
-            epoch_val_loss = running_val_loss/len(testloader)
-            epoch_val_acc = running_accuracy/len(testloader)
-            
+            epoch_loss = running_loss / len(trainloader)
+            epoch_val_loss = running_val_loss / len(testloader)
+            epoch_val_acc = running_accuracy / len(testloader)
+
             train_losses.append(epoch_loss)
             test_losses.append(epoch_val_loss)
             accuracies.append(epoch_val_acc)
-            
+
             logging.info(f"Testset accuracy: {epoch_val_acc*100}%")
             logging.info(f"Validation loss: {epoch_val_loss}")
             logging.info(f"Training loss: {epoch_loss}")
-    logging.info(f"Training finished!")
-            
+    logging.info("Training finished!")
+
     # saving final model
     os.makedirs("models/", exist_ok=True)
     torch.save(model.state_dict(), "models/trained_model.pt")
-    logging.info(f"Model saved")
+    logging.info("Model saved")
 
-
-    plt.plot(np.arange(cfg.params.epochs), train_losses, label='training loss')
-    plt.plot(np.arange(cfg.params.epochs), test_losses, label='validation loss')
-    plt.plot(np.arange(cfg.params.epochs), accuracies, label='accuracy')
-    plt.xlabel('epochs')
+    plt.plot(np.arange(cfg.params.epochs), train_losses, label="training loss")
+    plt.plot(np.arange(cfg.params.epochs), test_losses, label="validation loss")
+    plt.plot(np.arange(cfg.params.epochs), accuracies, label="accuracy")
+    plt.xlabel("epochs")
     plt.legend()
-    plt.title('MNIST model training')
-    
+    plt.title("MNIST model training")
+
     os.makedirs("reports/figures/", exist_ok=True)
     plt.savefig("reports/figures/train_loss.png")
 
