@@ -29,16 +29,13 @@ def train():
         model = Linear()
         
     model.train()
-    train_set = torch.load(
-        os.path.abspath(os.path.join(dir, "../../data/processed/train_mnist.pt"))
-    )
+    train_set = torch.load("data/processed/train_mnist.pt")
     trainloader = torch.utils.data.DataLoader(
         train_set, batch_size=args.batchsize, shuffle=True
     )
 
-    test_set = torch.load(
-        os.path.abspath(os.path.join(dir, "../../data/processed/test_mnist.pt"))
-    )
+    test_set = torch.load("data/processed/test_mnist.pt")
+    
     testloader = torch.utils.data.DataLoader(
         test_set, batch_size=args.batchsize, shuffle=True
     )
@@ -63,12 +60,8 @@ def train():
             running_loss += loss.item()
             step += 1
             if step % 100 == 0:
-                torch.save(
-                    model.state_dict(),
-                    os.path.abspath(
-                        os.path.join(dir, "../../models/checkpoint.pth")
-                    ),
-                )
+                os.makedirs("models/", exist_ok=True)
+                torch.save(model.state_dict(), "models/trained_model.pt")
         else:
             with torch.no_grad():
                 running_accuracy = 0
@@ -100,9 +93,9 @@ def train():
     plt.legend()
     plt.title('MNIST model training')
     
-    plt.savefig(
-        os.path.abspath(os.path.join(dir, "../../reports/figures/train_loss.png"))
-    )
+    os.makedirs("reports/figures/", exist_ok=True)
+    plt.savefig("reports/figures/train_loss.png")
+    
 
 
 if __name__ == "__main__":
