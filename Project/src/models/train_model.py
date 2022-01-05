@@ -5,7 +5,7 @@ sys.path.append(os.path.abspath(".."))
 
 import torch
 from torch import nn, optim
-from model import CNN
+from model import LinearModel, CNN
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -60,8 +60,9 @@ class TrainModel(object):
 
         criterion = nn.NLLLoss()
         optimizer = optim.Adam(model.parameters(), lr=args.lr)
+        epochs = args.epochs
         step = 0
-        train_losses, test_losses = [], []
+        train_losses, test_losses, accuracies = [], [], []
         for e in range(args.epochs):
             running_loss = 0
             for images, labels in trainloader:
@@ -75,7 +76,6 @@ class TrainModel(object):
                 optimizer.step()
 
                 running_loss += loss.item()
-                train_losses.append(loss.item())
                 step += 1
                 if step % 100 == 0:
                     torch.save(
@@ -96,13 +96,27 @@ class TrainModel(object):
                         equals = top_class == labels.view(*top_class.shape)
                         accuracy = torch.mean(equals.type(torch.FloatTensor))
                         running_accuracy += accuracy.item()
-                print(f"Testset accuracy: {running_accuracy/len(testloader)*100}%")
-                print(f"Validation loss: {running_val_loss/len(testloader)}")
-                print(f"Training loss: {running_loss/len(trainloader)}")
+                epoch_loss = running_loss/len(trainloader)
+                epoch_val_loss = running_val_loss/len(testloader)
+                epoch_val_acc = running_accuracy/len(testloader)
+                
+                train_losses.append(epoch_loss)
+                test_losses.append(epoch_val_loss)
+                accuracies.append(epoch_val_acc)
+                
+                print(f"Testset accuracy: {epoch_val_acc}%")
+                print(f"Validation loss: {epoch_val_loss}")
+                print(f"Training loss: {epoch_loss}")
 
-        plt.plot(np.arange(step), train_loss)
+        plt.plot(np.arange(epochs), train_losses, label='training loss')
+        plt.plot(np.arange(epochs), test_losses, label='validation loss')
+        plt.plot(np.arange(epochs), accuracies, label='accuracy')
+        plt.xlabel('epochs')
+        plt.legend()
+        plt.title('MNIST model training')
+        
         plt.savefig(
-            os.path.abspath(os.path.join(dir, "../reports/figures/train_loss.png"))
+            os.path.abspath(os.path.join(dir, "../../reports/figures/train_loss.png"))
         )
 
 
