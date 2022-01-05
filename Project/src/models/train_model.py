@@ -95,8 +95,9 @@ def train():
     
     os.makedirs("reports/figures/", exist_ok=True)
     plt.savefig("reports/figures/train_loss.png")
-    
 
 
 if __name__ == "__main__":
     train()
+
+docker run --name experiment5 -v -%cd%/models:/models/ -v %cd%/reports/figures:/reports/figures/ trainer:latest
