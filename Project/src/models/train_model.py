@@ -8,44 +8,46 @@ from torch import nn, optim
 from model import Linear, CNN
 import matplotlib.pyplot as plt
 import numpy as np
+import hydra
+import logging
 
 
-def train():
-    parser = argparse.ArgumentParser(description="Training arguments")
-    parser.add_argument("--lr", default=0.001, type=float)
-    parser.add_argument("--epochs", default=5, type=int)
-    parser.add_argument("--batchsize", default=128, type=int)
-    parser.add_argument("--model", default='linear', type=str)
-    # add any additional argument that you want
-    args = parser.parse_args(sys.argv[1:])
-    print(args)
+log = logging.getLogger(__name__)
 
+
+@hydra.main(config_path='../conf', config_name='config')
+def train(cfg):
+    log.info(f"Training started with parameters: {cfg.params}")
+    torch.manual_seed(cfg.params.seed)
+    
     dir = os.path.dirname(__file__)
 
     # TODO: Implement training loop here
-    if args.model == 'CNN':
+    if cfg.params.model == 'cnn':
         model = CNN()
     else:
         model = Linear()
         
     model.train()
-    train_set = torch.load("data/processed/train_mnist.pt")
+    train_set = torch.load(f'{cfg.paths.data_path}/{cfg.files.train_data}')
     trainloader = torch.utils.data.DataLoader(
-        train_set, batch_size=args.batchsize, shuffle=True
+        train_set, batch_size=cfg.params.batch_size, shuffle=True
     )
+    log.info(f"Training data loaded")
 
-    test_set = torch.load("data/processed/test_mnist.pt")
+    test_set = torch.load(f'{cfg.paths.data_path}/{cfg.files.test_data}')
     
     testloader = torch.utils.data.DataLoader(
-        test_set, batch_size=args.batchsize, shuffle=True
+        test_set, batch_size=cfg.params.batch_size, shuffle=False
     )
+    
+    log.info(f"Test data loaded")
 
     criterion = nn.NLLLoss()
-    optimizer = optim.Adam(model.parameters(), lr=args.lr)
-    epochs = args.epochs
+    optimizer = optim.Adam(model.parameters(), lr=cfg.params.lr)
     step = 0
     train_losses, test_losses, accuracies = [], [], []
-    for e in range(args.epochs):
+    for e in range(cfg.params.epochs):
         running_loss = 0
         for images, labels in trainloader:
             optimizer.zero_grad()
@@ -59,9 +61,11 @@ def train():
 
             running_loss += loss.item()
             step += 1
-            if step % 100 == 0:
-                os.makedirs("models/", exist_ok=True)
-                torch.save(model.state_dict(), "models/trained_model.pt")
+            # checkpointing
+            # if step % 100 == 0:
+            #     os.makedirs("models/", exist_ok=True)
+            #     torch.save(model.state_dict(), "models/trained_model.pt")
+
         else:
             with torch.no_grad():
                 running_accuracy = 0
@@ -82,13 +86,20 @@ def train():
             test_losses.append(epoch_val_loss)
             accuracies.append(epoch_val_acc)
             
-            print(f"Testset accuracy: {epoch_val_acc}%")
-            print(f"Validation loss: {epoch_val_loss}")
-            print(f"Training loss: {epoch_loss}")
+            logging.info(f"Testset accuracy: {epoch_val_acc*100}%")
+            logging.info(f"Validation loss: {epoch_val_loss}")
+            logging.info(f"Training loss: {epoch_loss}")
+    logging.info(f"Training finished!")
+            
+    # saving final model
+    os.makedirs("models/", exist_ok=True)
+    torch.save(model.state_dict(), "models/trained_model.pt")
+    logging.info(f"Model saved")
 
-    plt.plot(np.arange(epochs), train_losses, label='training loss')
-    plt.plot(np.arange(epochs), test_losses, label='validation loss')
-    plt.plot(np.arange(epochs), accuracies, label='accuracy')
+
+    plt.plot(np.arange(cfg.params.epochs), train_losses, label='training loss')
+    plt.plot(np.arange(cfg.params.epochs), test_losses, label='validation loss')
+    plt.plot(np.arange(cfg.params.epochs), accuracies, label='accuracy')
     plt.xlabel('epochs')
     plt.legend()
     plt.title('MNIST model training')
@@ -99,5 +110,3 @@ def train():
 
 if __name__ == "__main__":
     train()
-
-docker run --name experiment5 -v -%cd%/models:/models/ -v %cd%/reports/figures:/reports/figures/ trainer:latest
