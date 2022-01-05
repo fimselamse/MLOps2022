@@ -5,63 +5,55 @@ sys.path.append(os.path.abspath(".."))
 
 import torch
 from torch import nn, optim
-from model import MyAwesomeModel
+from model import CNN, Linear
 import matplotlib.pyplot as plt
 import numpy as np
 
 
-class PredictModel(object):
-    """Helper class that will help launch class methods as commands
-    from a single script
-    """
 
-    def __init__(self):
-        parser = argparse.ArgumentParser(
-            description="Script for either training or evaluating",
-            usage="python train_model.py <command>",
-        )
-        parser.add_argument("command", help="Subcommand to run")
-        args = parser.parse_args(sys.argv[1:2])
-        if not hasattr(self, args.command):
-            print("Unrecognized command")
+def predict():
+    parser = argparse.ArgumentParser(description="Training arguments")
+    parser.add_argument("--model", default="linear", type=str)
+    parser.add_argument("--data", default="data/processed/example_data.pt", type=str)
+    parser.add_argument("--model_instance", default="models/trained_model.pt")
+    args = parser.parse_args(sys.argv[1:])
+    print(args)
 
-            parser.print_help()
-            exit(1)
-        # use dispatch pattern to invoke method with same name
-        getattr(self, args.command)()
+    dir = os.path.dirname(__file__)
 
-    def predict(self):
-        parser = argparse.ArgumentParser(description="Training arguments")
-        parser.add_argument("--model", default="", type=str)
-        parser.add_argument("--data", default="", type=str)
-        args = parser.parse_args(sys.argv[2:])
-        print(args)
+    if args.model == 'CNN':
+        model = CNN()
+    else:
+        model = Linear()
+        
+    state_dict = torch.load(args.model_instance)
+    model.load_state_dict(state_dict)
+    model.eval()
 
-        dir = os.path.dirname(__file__)
+    images = torch.torch.load(args.data)
+    loader = torch.utils.data.DataLoader(images, batch_size=1, shuffle=True)
+    predictions = []
 
-        model = MyAwesomeModel()
-        state_dict = torch.load(
-            os.path.abspath(os.path.join(dir, "../../" + args.model))
-        )
-        model.load_state_dict(state_dict)
-        model.eval()
+    for item in loader:
+        with torch.no_grad():
+            prediction = model(item)
 
-        images = torch.torch.load(
-            os.path.abspath(os.path.join(dir, "../../" + args.data))
-        )
-        loader = torch.utils.data.DataLoader(images, batch_size=1, shuffle=True)
-        predictions = []
+            predicted_class = np.argmax(prediction)
 
-        for item, label in loader:
-            with torch.no_grad():
-                prediction = model(item)
-
-                predicted_class = np.argmax(prediction)
-
-                predictions.append([item, predicted_class])
-
-        return predictions
-
+            predictions.append([item, predicted_class])
+            
+    # create plot of predictions
+    figure = plt.figure(figsize=(10, 8))
+    cols, rows = int(len(loader)/2), 2
+    for i in range(1, cols * rows + 1):
+        img, pred = predictions[i-1]
+        figure.add_subplot(rows, cols, i)
+        plt.title(pred)
+        plt.axis("off")
+        plt.imshow(img.squeeze(), cmap="gray")
+    
+    os.makedirs("reports/figures/", exist_ok=True)
+    plt.savefig("reports/figures/predictions.png")
 
 if __name__ == "__main__":
-    PredictModel()
+    predict()

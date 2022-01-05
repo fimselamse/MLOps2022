@@ -31,7 +31,7 @@ data: requirements
 
 ## Make Train
 train:
-	$(PYTHON_INTERPRETER) src/models/train_model.py train --lr=0.01 --batchsize=64 --epochs=15
+	$(PYTHON_INTERPRETER) src/models/train_model.py
 
 ## Make Predict
 predict:
