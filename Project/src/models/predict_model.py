@@ -51,7 +51,7 @@ def predict():
         plt.title(pred)
         plt.axis("off")
         plt.imshow(img.squeeze(), cmap="gray")
-
+    
     os.makedirs("reports/figures/", exist_ok=True)
     plt.savefig("reports/figures/predictions.png")
 
