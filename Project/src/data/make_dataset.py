@@ -8,6 +8,7 @@ import numpy as np
 import torch
 from torchvision import datasets, transforms
 from torch.utils.data import DataLoader, TensorDataset
+from torch.nn.functional import normalize
 
 
 @click.command()
@@ -22,34 +23,35 @@ def main(input_filepath, output_filepath):
     dir = os.path.dirname(__file__)
 
     # training data is separated into multiple files - load and concatenate.
-    traindata = np.load(
-        os.path.abspath(os.path.join(dir, "../../data/raw/corruptmnist/train_0.npz"))
-    )
-    images = traindata["images"]
-    labels = traindata["labels"]
-
-    for i in range(1, 4):
+    images, labels = [], []
+    for i in range(5):
         traindata = np.load(
             os.path.abspath(
                 os.path.join(dir, f"../../data/raw/corruptmnist/train_{i}.npz")
             )
         )
-        images = np.concatenate((images, traindata["images"]))
-        labels = np.concatenate((labels, traindata["labels"]))
+        images.append(traindata["images"])
+        labels.append(traindata["labels"])
 
-    trainset = TensorDataset(torch.Tensor(images), torch.LongTensor(labels))
+    images = torch.FloatTensor(np.concatenate(images))
+    labels = torch.LongTensor(np.concatenate(labels))
+    normalize(images)
+    trainset = TensorDataset(images, labels)
     torch.save(
         trainset,
         os.path.abspath(os.path.join(dir, f"../../data/processed/train_mnist.pt")),
     )
 
     # load and transform test
-    traindata = np.load(
+    testdata = np.load(
         os.path.abspath(os.path.join(dir, "../../data/raw/corruptmnist/test.npz"))
     )
-    images = traindata["images"]
-    labels = traindata["labels"]
-    testset = TensorDataset(torch.Tensor(images), torch.LongTensor(labels))
+    images = testdata["images"]
+    labels = testdata["labels"]
+    test_images = torch.FloatTensor(testdata["images"])
+    test_labels = torch.LongTensor(testdata["labels"])
+    normalize(test_images)
+    testset = TensorDataset(images, labels)
     torch.save(
         testset,
         os.path.abspath(os.path.join(dir, f"../../data/processed/test_mnist.pt")),
