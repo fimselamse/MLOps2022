@@ -1,0 +1,4 @@
+docker run --name prediction8 -v $(pwd)/models:/models -v $(pwd)/reports/figures:/reports/figures predicter:latest
+
+
+docker run --name experiment8 -v $(pwd)/models:/models/ -v $(pwd)/reports/figures:/reports/figures/ trainer:latest

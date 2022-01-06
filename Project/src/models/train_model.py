@@ -102,4 +102,5 @@ def train(cfg):
 
 
 if __name__ == "__main__":
-    train()
+    with torch.profiler.profile() as profiler:
+        train()
