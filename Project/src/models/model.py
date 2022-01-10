@@ -38,8 +38,12 @@ class CNN(nn.Module):
         self.linear = nn.Linear(32 * 7 * 7, 10)
 
     def forward(self, x):
-        # make sure input tensor is flattened
+        if x.ndim != 3:
+            raise ValueError('Expected input to be a 3D tensor')
+        if x.shape[1] != 28 or x.shape[2] != 28:
+            raise ValueError('Expected each sample to have shape [28, 28]')
         x = x.reshape((x.shape[0], 1, x.shape[1], x.shape[1]), x)
+        
         x = F.relu(self.conv1(x))
         x = F.relu(self.conv2(x))
 
