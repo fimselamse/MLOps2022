@@ -16,7 +16,7 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: 3.9.7
-      - name: Install isort
-        run: pip install isort
-      - name: Run isort
-        run: isort .                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+    - name: Install isort
+      run: pip install isort
+    - name: Run isort
+      run: isort .                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
