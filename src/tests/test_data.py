@@ -1,8 +1,9 @@
 import torch
 import numpy as np
+from tests import _PATH_DATA
 
-train_set = torch.load('data/processed/train_mnist.pt')
-test_set = torch.load('data/processed/test_mnist.pt')
+train_set = torch.load(f'{_PATH_DATA}/train_mnist.pt')
+test_set = torch.load(f'{_PATH_DATA}/test_mnist.pt')
 
 # processed data is stored as torch.utils.data.TensorDataset and thus
 # needs to be accessed a little different. It works though.
