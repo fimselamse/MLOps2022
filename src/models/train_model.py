@@ -7,23 +7,20 @@ import numpy as np
 import torch
 from model import CNN, Linear
 from torch import nn, optim
-import wandb
-import bios
-from keras.callbacks import TensorBoard
 
 
-
-### what was i doing:
-### trying to get wandb to pull configuration straight from the config.yml files 
-### problem: can't locate file by the path underneat??
+# what was i doing:
+# trying to get wandb to pull configuration straight from the config.yml files
+# problem: can't locate file by the path underneat??
 # wandb.init(config='..conf/config.yaml')
 log = logging.getLogger(__name__)
 
 
 @hydra.main(config_path="../conf", config_name="config")
 def train(cfg):
-    # with torch.profiler.profile(activities=[torch.profiler.ProfilerActivity.CPU], on_trace_ready=torch.profiler.tensorboard_trace_handler('log/')) as prof:
-    
+    # with torch.profiler.profile(activities=[torch.profiler.ProfilerActivity.CPU],
+    # on_trace_ready=torch.profiler.tensorboard_trace_handler('log/')) as prof:
+
     log.info(f"Training started with parameters: {cfg.params}")
     torch.manual_seed(cfg.params.seed)
 

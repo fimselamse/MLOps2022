@@ -27,23 +27,29 @@ class CNN(nn.Module):
         super().__init__()
         self.conv1 = nn.Sequential(
             nn.Conv2d(
-                in_channels=1, out_channels=16, kernel_size=3, stride=1, padding=2,
+                in_channels=1,
+                out_channels=16,
+                kernel_size=3,
+                stride=1,
+                padding=2,
             ),
             nn.ReLU(),
             nn.MaxPool2d(kernel_size=2),
         )
         self.conv2 = nn.Sequential(
-            nn.Conv2d(16, 32, 5, 1, 2), nn.ReLU(), nn.MaxPool2d(2),
+            nn.Conv2d(16, 32, 5, 1, 2),
+            nn.ReLU(),
+            nn.MaxPool2d(2),
         )
         self.linear = nn.Linear(32 * 7 * 7, 10)
 
     def forward(self, x):
         if x.ndim != 3:
-            raise ValueError('Expected input to be a 3D tensor')
+            raise ValueError("Expected input to be a 3D tensor")
         if x.shape[1] != 28 or x.shape[2] != 28:
-            raise ValueError('Expected each sample to have shape [28, 28]')
+            raise ValueError("Expected each sample to have shape [28, 28]")
         x = x.reshape((x.shape[0], 1, x.shape[1], x.shape[1]), x)
-        
+
         x = F.relu(self.conv1(x))
         x = F.relu(self.conv2(x))
 
