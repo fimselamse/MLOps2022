@@ -107,8 +107,8 @@ def train(cfg):
     plt.legend()
     plt.title("MNIST model training")
 
-    os.makedirs("reports/figures/", exist_ok=True)
-    plt.savefig("reports/figures/train_loss.png")
+    os.makedirs("figures/", exist_ok=True)
+    plt.savefig("figures/train_loss.png")
 
 
 if __name__ == "__main__":
