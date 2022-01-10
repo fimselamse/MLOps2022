@@ -1,4 +1,4 @@
-name: "isort"
+name: "Run isort"
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [ master, main ]
 
 jobs:
-  isort:
+  test-ode:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout

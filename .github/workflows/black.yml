@@ -1,13 +1,13 @@
-name: "formatter"
+name: "Run formatter"
 
 on:
   push:
     branches: [ master, main ]
   pull_request:
     branches: [ master, main ]
-
+  
 jobs:
-  black:
+  test-ode:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
