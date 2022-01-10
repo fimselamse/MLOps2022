@@ -1,7 +1,5 @@
 import torch
 import numpy as np
-from model import CNN, Linear
-from train_model import train
 
 def test_training():
     model = CNN()
