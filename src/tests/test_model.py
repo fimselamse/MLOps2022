@@ -1,6 +1,6 @@
 import torch
 import numpy as np
-from src.model import CNN, Linear
+from ..models.model import CNN, Linear
 
 def test_cnn():
     model = CNN()
