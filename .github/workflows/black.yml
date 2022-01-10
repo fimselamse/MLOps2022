@@ -1,0 +1,22 @@
+name: "Run formatter"
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+
+jobs:
+  run-formatter:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Set up Python 3.9.7
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.9.7
+    - name: Install black
+      run: pip install black
+    - name: Run black
+      run: black .
