@@ -8,7 +8,7 @@ paths:
   model_path: ${hydra:runtime.cwd}/models
 
 params:
-  model: linear
+  model: cnn
   batch_size: 128
   x_dim: 784
   hidden_dim: 400
