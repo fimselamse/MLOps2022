@@ -1,18 +1,10 @@
-name: linter
+name: "linter"
 
 on:
   push:
     branches: [ master, main ]
-      paths:
-        - '*.py'
   pull_request:
     branches: [ master, main ]
-      paths:
-        - '*.py'
-
-on:
-  push:
-    
 
 jobs:
   flake8:

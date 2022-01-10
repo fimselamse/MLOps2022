@@ -1,14 +1,10 @@
-name: isort
+name: "isort"
 
 on:
   push:
     branches: [ master, main ]
-      paths:
-        - '*.py'
   pull_request:
     branches: [ master, main ]
-      paths:
-        - '*.py'
 
 jobs:
   isort:
@@ -22,5 +18,5 @@ jobs:
         python-version: 3.9.7
       - name: Install isort
         run: pip install isort
-      - name: Run flake8 
+      - name: Run isort
         run: isort .                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
