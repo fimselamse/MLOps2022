@@ -7,7 +7,7 @@ on:
     branches: [ master, main ]
 
 jobs:
-  test-ode:
+  sort-imports:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
