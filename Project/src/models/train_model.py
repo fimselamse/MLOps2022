@@ -7,12 +7,23 @@ import numpy as np
 import torch
 from model import CNN, Linear
 from torch import nn, optim
+import wandb
+import bios
+from keras.callbacks import TensorBoard
 
+
+
+### what was i doing:
+### trying to get wandb to pull configuration straight from the config.yml files 
+### problem: can't locate file by the path underneat??
+# wandb.init(config='..conf/config.yaml')
 log = logging.getLogger(__name__)
 
 
 @hydra.main(config_path="../conf", config_name="config")
 def train(cfg):
+    # with torch.profiler.profile(activities=[torch.profiler.ProfilerActivity.CPU], on_trace_ready=torch.profiler.tensorboard_trace_handler('log/')) as prof:
+    
     log.info(f"Training started with parameters: {cfg.params}")
     torch.manual_seed(cfg.params.seed)
 
@@ -55,10 +66,6 @@ def train(cfg):
 
             running_loss += loss.item()
             step += 1
-            # checkpointing
-            # if step % 100 == 0:
-            #     os.makedirs("models/", exist_ok=True)
-            #     torch.save(model.state_dict(), "models/trained_model.pt")
 
         else:
             with torch.no_grad():
@@ -83,6 +90,9 @@ def train(cfg):
             logging.info(f"Testset accuracy: {epoch_val_acc*100}%")
             logging.info(f"Validation loss: {epoch_val_loss}")
             logging.info(f"Training loss: {epoch_loss}")
+            # wandb.log({"training_loss": epoch_loss})
+            # wandb.log({"validation_loss": epoch_val_loss})
+            # wandb.log({"accuracy": epoch_val_acc*100})
     logging.info("Training finished!")
 
     # saving final model
@@ -102,5 +112,4 @@ def train(cfg):
 
 
 if __name__ == "__main__":
-    with torch.profiler.profile() as profiler:
-        train()
+    train()
