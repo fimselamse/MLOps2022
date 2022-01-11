@@ -11,7 +11,7 @@ from torch import nn, optim
 
 # what was i doing:
 # trying to get wandb to pull configuration straight from the config.yml files
-# problem: can't locate file by the path underneat??
+# problem: can't locate file     by the path underneat??
 # wandb.init(config='..conf/config.yaml')
 log = logging.getLogger(__name__)
 
