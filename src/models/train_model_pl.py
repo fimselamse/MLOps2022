@@ -67,7 +67,7 @@ def main(cfg):
     )
     
     trainer.fit(model=model, train_dataloaders=trainloader, val_dataloaders=testloader)
-
+    
 
 if __name__ == "__main__":
     
