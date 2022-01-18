@@ -1,9 +1,8 @@
-import pytorch_lightning as pl
 import torch.nn.functional as F
 from torch import nn
 
 
-class Linear(pl.LightningModule):
+class Linear(LightningModule):
     def __init__(self):
         super().__init__()
         self.fc1 = nn.Linear(784, 256)
@@ -22,7 +21,7 @@ class Linear(pl.LightningModule):
         return x
 
 
-class CNN(pl.LightningModule):
+class CNN(LightningModule):
     def __init__(self):
         super().__init__()
         self.conv1 = nn.Sequential(
