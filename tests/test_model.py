@@ -1,4 +1,5 @@
 import torch
+
 from src.models.model import CNN, Linear
 
 
