@@ -23,8 +23,8 @@ var/
 .installed.cfg
 *.egg
 
-model_store/
 logs
+model_store/
 
 # PyInstaller
 #  Usually these files are written by a python script from a template

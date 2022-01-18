@@ -1,6 +1,6 @@
+import pytorch_lightning as pl
 import torch.nn.functional as F
 from torch import nn
-import pytorch_lightning as pl
 
 
 class Linear(pl.LightningModule):

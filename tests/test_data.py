@@ -1,5 +1,6 @@
-import torch
 import numpy as np
+import torch
+
 from tests import _PATH_DATA
 
 train_set = torch.load(f"{_PATH_DATA}/processed/train_mnist.pt")

@@ -7,7 +7,9 @@ import numpy as np
 import torch
 from model import CNN, Linear
 from torch import nn, optim
+
 import wandb
+
 
 @hydra.main(config_path="../conf", config_name="config")
 def train(cfg):
@@ -17,7 +19,6 @@ def train(cfg):
     log.info(f"Training started with parameters: {cfg.params}")
     torch.manual_seed(cfg.params.seed)
 
-    # TODO: Implement training loop here
     if cfg.params.model == "cnn":
         model = CNN()
     else:
@@ -77,17 +78,14 @@ def train(cfg):
             test_losses.append(epoch_val_loss)
             accuracies.append(epoch_val_acc)
 
-            # logging.info(f"Testset accuracy: {epoch_val_acc*100}%")
-            # logging.info(f"Validation loss: {epoch_val_loss}")
-            # logging.info(f"Training loss: {epoch_loss}")
             wandb.log({"training_loss": epoch_loss})
             wandb.log({"validation_loss": epoch_val_loss})
-            wandb.log({"accuracy": epoch_val_acc*100})
+            wandb.log({"accuracy": epoch_val_acc * 100})
 
     # saving final model
     os.makedirs("models/", exist_ok=True)
     torch.save(model.state_dict(), "models/trained_model.pt")
-    logging.info("Model saved")
+    log.info("Model saved")
 
     plt.plot(np.arange(cfg.params.epochs), train_losses, label="training loss")
     plt.plot(np.arange(cfg.params.epochs), test_losses, label="validation loss")
