@@ -60,7 +60,7 @@ docs/_build/
 target/
 
 #wandb
-wandb*
+# wandb*
 
 # DotEnv configuration
 .env

@@ -1,0 +1,22 @@
+{
+    "os": "Windows-10-10.0.19041-SP0",
+    "python": "3.9.7",
+    "heartbeatAt": "2022-01-06T13:10:19.967869",
+    "startedAt": "2022-01-06T13:10:10.858798",
+    "docker": null,
+    "cpu_count": 4,
+    "cuda": null,
+    "args": [],
+    "state": "running",
+    "program": "C:\\MLOPS\\MLOps2022\\Project\\src\\models\\train_model.py",
+    "codePath": "Project\\src\\models\\train_model.py",
+    "git": {
+        "remote": "https://github.com/fimselamse/MLOps2022",
+        "commit": "1f3dcea664d6b644b283980a5b421387467b5ff7"
+    },
+    "email": "hanschrmil@gmail.com",
+    "root": "C:/MLOPS/MLOps2022",
+    "host": "AS3-PC06CJTN",
+    "username": "meki",
+    "executable": "C:\\Users\\meki\\Anaconda3\\envs\\my_env\\python.exe"
+}
